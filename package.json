@@ -1,0 +1,67 @@
+{
+  "name": "pimiibo-interactive",
+  "version": "0.1.0",
+  "description": "A tool to create your own amiibo with an interactive web frontend",
+  "main": "server.js",
+  "browser": "client",
+  "contributors": [
+    "Jason Robitaille",
+    "Garrett Davidson"
+  ],
+  "license": "Apache-2.0",
+  "private": true,
+  "homepage": "https://github.com/JayCanuck/pimiibo-interactive#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JayCanuck/pimiibo-interactive.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JayCanuck/pimiibo-interactive/issues"
+  },
+  "scripts": {
+    "start": "pm2 start server.js",
+    "stop": "pm2 stop server.js",
+    "startup": "pm2 startup",
+    "save": "pm2 save",
+    "unstartup": "pm2 unstartup",
+    "pm2": "pm2",
+    "serve": "enact serve",
+    "pack": "enact pack",
+    "pack-p": "enact pack -p",
+    "watch": "enact pack --watch",
+    "clean": "enact clean",
+    "lint": "enact lint .",
+    "license": "enact license",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "enact": {
+    "theme": "agate"
+  },
+  "eslintConfig": {
+    "extends": "enact"
+  },
+  "eslintIgnore": [
+    "node_modules/*",
+    "build/*",
+    "dist/*"
+  ],
+  "keywords": [
+    "raspberry pi",
+    "nfc",
+    "amiibo",
+    "pimiibo"
+  ],
+  "dependencies": {
+    "@enact/agate": "enactjs/agate#develop",
+    "@enact/core": "^3.0.0",
+    "@enact/i18n": "^3.0.0",
+    "@enact/spotlight": "^3.0.0",
+    "@enact/ui": "^3.0.0",
+    "express": "^4.17.1",
+    "ilib": "^14.2.0",
+    "pm2": "^3.5.1",
+    "prop-types": "^15.6.2",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
+  }
+}
