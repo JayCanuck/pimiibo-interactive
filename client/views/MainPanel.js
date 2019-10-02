@@ -1,18 +1,63 @@
-import Button from '@enact/agate/Button';
 import ConsumerDecorator from '@enact/agate/data/ConsumerDecorator';
 import kind from '@enact/core/kind';
 import {Panel} from '@enact/agate/Panels';
+import ri from '@enact/ui/resolution';
+import {Cell, Row} from '@enact/ui/Layout';
+import PropTypes from 'prop-types';
 import React from 'react';
 
+import AmiiboItem from '../components/AmiiboItem';
+import Sidebar from '../components/Sidebar';
+import {VirtualGridList} from '../components/VirtualList';
 import {getSeries, getAmiibos} from '../service';
+
+// import css from './MainPanel.module.less';
 
 const MainPanelBase = kind({
 	name: 'MainPanel',
 
-	render: ({active, series, amiibos, ...props}) => {
+	propTypes: {
+		series: PropTypes.array,
+		active: PropTypes.string,
+		amiibos: PropTypes.array
+	},
+
+	defaultProps: {
+		series: [],
+		amiibos: []
+	},
+
+	computed: {
+		renderAmiibos: ({amiibos}) => (rest) => {
+			const {name, image: imgSrc, head, tail} = amiibos[rest.index];
+			return (
+				<AmiiboItem key={'amiibo-' + rest.index} imgSrc={imgSrc} head={head} tail={tail} {...rest}>
+					{name}
+				</AmiiboItem>
+			);
+		}
+	},
+
+	render: ({active, series, amiibos, renderAmiibos, ...props}) => {
 		return (
 			<Panel {...props}>
-				<Button>Click Me</Button>
+				<Row style={{height:'100%'}}>
+					<Cell shrink>
+						<Sidebar active={active} series={series} />
+					</Cell>
+					<Cell>
+						<div style={{height:'100%'}}>
+							<VirtualGridList
+								dataSize={amiibos.length}
+								itemRenderer={renderAmiibos}
+								itemSize={{
+									minWidth: ri.scale(210),
+									minHeight: ri.scale(210)
+								}}
+							/>
+						</div>
+					</Cell>
+				</Row>
 			</Panel>
 		)
 	}

@@ -20,7 +20,7 @@ const App = kind({
 
 	render: ({series, ...props}) => (
 		<div {...props}>
-			<Panels>
+			<Panels noCloseButton>
 				<MainPanel series={series}/>
 			</Panels>
 		</div>
