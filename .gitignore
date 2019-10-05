@@ -12,9 +12,9 @@ dist
 
 # misc
 .DS_Store
-npm-debug.log
+*.log
 
 
 pimiibo-node/*.bin
 pimiibo-node/pimiibo
-
+amiibo
