@@ -32,7 +32,6 @@ const AmiiboItem = kind({
 		onClick: handle(
 			forward('onClick'),
 			(ev, {children}) => {
-				console.log('clicked')
 				window.location.hash = `#${encodeURIComponent(children)}`;
 			}
 		)

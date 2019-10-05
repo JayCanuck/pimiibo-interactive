@@ -1,29 +1,28 @@
+const EXPIRY_THRESHOLD = 1*24*60*60*1000; // 1 day in miliseconds
+
 const loadCachedValue = key => {
 	const result = window.localStorage.getItem(key);
 	if (result) {
 		try {
-			return JSON.parse(result);
+			const obj = JSON.parse(result);
+			const timestamp = new Date().getTime();
+			if (obj.timestamp && obj.value && (timestamp - obj.timestamp) < EXPIRY_THRESHOLD) {
+				return obj.value;
+			} else {
+				window.localStorage.removeItem(key);
+			}
 		} catch (e) {
-			// Do nothing on failure
+			window.localStorage.removeItem(key);
 		}
 	}
-}
+};
+const storeCachedValue = (key, value) => {
+	const timestamp = new Date().getTime();
+	const obj = {timestamp, value};
+	window.localStorage.setItem(key, JSON.stringify(obj));
+};
 
-export function applySeriesCache(state) {
-	state.series = loadCachedValue('amiibo-series') || state.series;
-	return state;
-}
-
-export function applyAmiiboCache(state, hash) {
-	state.amiibos[hash] = loadCachedValue(`amiibo-${hash}`) || state.amiibos[hash];
-}
-
-export function saveSeriesCache(state) {
-	window.localStorage.setItem('amiibo-series', JSON.stringify(state.series));
-	return state;
-}
-
-export function applyAmiiboCache(state, hash) {
-	window.localStorage.setItem(`amiibo-${hash}`, JSON.stringify(state.amiibos[hash]));
-	return state;
-}
+export const getAmiiboCache = type => loadCachedValue(`amiibo-${type}`);
+export const getSeriesCache = () => loadCachedValue('amiibo-series');
+export const saveAmiiboCache = (type, amiibos) => storeCachedValue(`amiibo-${type}`, amiibos);
+export const saveSeriesCache = (series) => storeCachedValue('amiibo-series', series);

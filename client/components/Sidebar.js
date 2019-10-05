@@ -1,11 +1,14 @@
 import kind from '@enact/core/kind';
+import Image from '@enact/agate/Image';
+import {Column, Cell} from '@enact/ui/Layout';
 import ri from '@enact/ui/resolution';
-import {VirtualList} from '@enact/moonstone/VirtualList';
+import {VirtualList} from '@enact/ui/VirtualList';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import MenuItem from './MenuItem';
+import logo from '../assets/logo.svg';
 
+import MenuItem from './MenuItem';
 import css from './Sidebar.module.less';
 
 const Sidebar = kind({
@@ -40,15 +43,18 @@ const Sidebar = kind({
 		delete props.active;
 		delete props.activateSeries;
 		return (
-			<div {...props}>
-				<VirtualList
-					dataSize={series.length}
-					horizontalScrollbar="hidden"
-					itemRenderer={renderMenu}
-					itemSize={ri.scale(20)}
-
-				/>
-			</div>
+			<Column {...props}>
+				<Cell shrink>
+					<Image src={logo} className={css.logo} sizing="fit" />
+				</Cell>
+				<Cell>
+					<VirtualList
+						dataSize={series.length}
+						itemRenderer={renderMenu}
+						itemSize={ri.scale(20)}
+					/>
+				</Cell>
+			</Column>
 		)
 	}
 });

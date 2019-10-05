@@ -1,4 +1,5 @@
 import Image from '@enact/agate/Image';
+import {adaptEvent, forward} from '@enact/core/handle';
 import kind from '@enact/core/kind';
 import Spottable from '@enact/spotlight/Spottable';
 import {Cell, Column} from '@enact/ui/Layout';
@@ -16,21 +17,25 @@ const AmiiboItemBase = kind({
 	},
 
 	propTypes: {
-		imgSrc: PropTypes.string,
-		head: PropTypes.string,
-		tail: PropTypes.string
+		info: PropTypes.any,
+		onOpenAmiibo: PropTypes.func
 	},
 
-	render: ({children, imgSrc, ...rest}) => {
-		delete rest.head;
-		delete rest.tail;
+	handlers: {
+		onClick: adaptEvent(
+			(ev, {info}) => Object.assign(ev, {value: info}),
+			forward('onClick')
+		)
+	},
+
+	render: ({info, ...rest}) => {
 		return (
 			<Column {...rest}>
 				<Cell shrink>
-					<Image className={css.image} src={imgSrc} sizing="fit" />
+					<Image className={css.image} src={info.image} sizing="fit"/>
 				</Cell>
 				<Cell className={css.label} shrink>
-					{children}
+					{info.name}
 				</Cell>
 			</Column>
 		)
