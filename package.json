@@ -10,6 +10,7 @@
   ],
   "license": "Apache-2.0",
   "private": true,
+  "gypfile": true,
   "homepage": "https://github.com/JayCanuck/pimiibo-interactive#readme",
   "repository": {
     "type": "git",
@@ -57,15 +58,20 @@
     "@enact/i18n": "^3.0.0",
     "@enact/spotlight": "^3.0.0",
     "@enact/ui": "^3.0.0",
+    "bindings": "^1.5.0",
     "chokidar": "^3.2.1",
     "express": "^4.17.1",
     "glob": "^7.1.4",
     "ilib": "^14.2.0",
+    "node-addon-api": "^1.7.1",
     "pm2": "^3.5.1",
     "prop-types": "^15.6.2",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0"
+  },
+  "devDependencies": {
+    "node-gyp": "^6.0.0"
   }
 }

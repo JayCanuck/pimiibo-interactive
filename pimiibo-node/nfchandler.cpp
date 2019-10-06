@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <nfc/nfc.h>
+#include <napi.h>
 
 #define PAGE_COUNT 135
 #define WRITE_COMMAND 0XA2
@@ -17,32 +18,47 @@ const nfc_modulation nmMifare = {
   .nbr = NBR_106,
 };
 
-NFCHandler::NFCHandler() {
-  printf("Initializing NFC adapter\n");
+NFCHandler::NFCHandler(Napi::Env env, Napi::Value fnThis, Napi::Function emit) {
+  this->env = env;
+  this->fnThis = fnThis;
+  this->emit = emit;
+
+  emitEvent("init");
   nfc_init(&context);
 
   if (!context) {
-    printf("Unable to init libnfc (malloc)\n");
-    exit(1);
+    throw "Unable to init libnfc.";
   }
 
   device = nfc_open(context, NULL);
 
   if (device == NULL) {
-    printf("ERROR: %s\n", "Unable to open NFC device.");
-    exit(1);
+    throw "Unable to open NFC device.";
   }
 
   if (nfc_initiator_init(device) < 0) {
     nfc_perror(device, "nfc_initiator_init");
-    exit(1);
+    throw "Device failed to load with libnfc";
   }
 
-  printf("NFC reader: opened\n");
+  emitEvent("open");
+}
+
+void NFCHandler::emitEvent(char *event) {
+  this->emit.Call(this->fnThis, {Napi::String::New(env, event)});
+}
+
+void NFCHandler::emitPageWrite(int page) {
+  Napi::Object payload = new Napi::Object::New(this->env);
+  payload.Set("page", Napi::Number::New(env, page));
+  payload.Set("count", Napi::Number::New(env, PAGE_COUNT));
+  this->emit.Call(
+        this->fnThis,
+        {Napi::String::New(env, "page"), payload});
 }
 
 void NFCHandler::readTagUUID(uint8_t uuidBuffer[]) {
-  printf("***Scan tag***\n");
+  emitEvent("scan");
 
   if (nfc_initiator_select_passive_target(device, nmMifare, NULL, 0, &target) > 0) {
     printf("Read UID: ");
@@ -50,8 +66,7 @@ void NFCHandler::readTagUUID(uint8_t uuidBuffer[]) {
     Amiitool::shared()->printHex(target.nti.nai.abtUid, uidSize);
 
     if (UUID_SIZE != uidSize) {
-      fprintf(stderr, "Read wrong size UID\n");
-      exit(1);
+      throw "Incorrect sized UID in file.";
     }
 
     for (int i = 0; i < UUID_SIZE; i++) {
@@ -69,37 +84,32 @@ void NFCHandler::writeAmiibo(Amiibo *amiibo) {
 }
 
 void NFCHandler::writeBuffer(const uint8_t *buffer) {
-  printf("Writing tag:\n");
+  emitEvent("write");
   writeDataPages(buffer);
   writeDynamicLockBytes();
   writeStaticLockBytes();
-  printf("Finished writing tag\n");
+  emitEvent("end");
 }
 
 void NFCHandler::writeDataPages(const uint8_t *buffer) {
-  printf("Writing encrypted bin:\n");
   for (uint8_t i = 3; i < PAGE_COUNT; i++) {
     writePage(i, buffer + (i * 4));
   }
-  printf("Done\n");
+  emitEvent("data-pages");
 }
 
 void NFCHandler::writeDynamicLockBytes() {
-  printf("Writing dynamic lock bytes\n");
   writePage(130, dynamicLockBytes);
-  printf("Done\n");
+  emitEvent("dynamic-lock");
 }
 
 void NFCHandler::writeStaticLockBytes() {
-  printf("Writing static lock bytes\n");
   writePage(2, staticLockBytes);
-  printf("Done\n");
+  emitEvent("static-lock");
 }
 
 void NFCHandler::writePage(uint8_t page, const uint8_t *buffer) {
-    printf("Writing to %d: %02x %02x %02x %02x...",
-         page, buffer[0], buffer[1], buffer[2], buffer[3]);
-
+  emitPageWrite(int(page));
   uint8_t sendData[6] = {
     WRITE_COMMAND, page, buffer[0], buffer[1], buffer[2], buffer[3]
   };
@@ -107,11 +117,9 @@ void NFCHandler::writePage(uint8_t page, const uint8_t *buffer) {
   int responseCode = nfc_initiator_transceive_bytes(device, sendData, 6, NULL, 0, 0);
 
   if (responseCode == 0) {
-    printf("Done\n");
+    emitEvent("page-end");
   } else {
-    printf("Failed\n");
-    fprintf(stderr, "Failed to write to tag\n");
     nfc_perror(device, "Write");
-    exit(1);
+    throw "Page write failed.";
   }
 }
