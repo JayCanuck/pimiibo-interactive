@@ -1,6 +1,7 @@
 #include "amiitool.h"
 #include "amiibo.h"
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>

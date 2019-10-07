@@ -2,6 +2,7 @@
 #include "amiitool.h"
 
 #include <stdio.h>
+#include <stdint.h>
 
 #define UUID_OFFSET 468
 #define PASSWORD_OFFSET 532
