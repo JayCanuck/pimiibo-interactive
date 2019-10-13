@@ -50,14 +50,14 @@ export function getAmiibos(series = ALL_AMIIBOS) {
 		return window.fetch(`${BASE_URL}/amiibo/?amiiboSeries=${encodeURIComponent(series)}`)
 			.then(res => res.json())
 			.then(res => updateFormat(res))
-			.then(res => res.amiibo.sort(amiiboSort))
+			.then(res => res.sort(amiiboSort))
 			.then(res => storeCache(saveAmiiboCache, res, series))
 	} else {
 		console.log(`Fetching ${BASE_URL}/amiibo/`);
 		return window.fetch(`${BASE_URL}/amiibo/`)
 			.then(res => res.json())
 			.then(res => updateFormat(res))
-			.then(res => res.amiibo.sort(amiiboSort))
+			.then(res => res.sort(amiiboSort))
 			.then(res => storeCache(saveAmiiboCache, res, ALL_AMIIBOS))
 	}
 }
