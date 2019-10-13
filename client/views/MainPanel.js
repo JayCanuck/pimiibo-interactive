@@ -12,7 +12,7 @@ import Sidebar from '../components/Sidebar';
 import {VirtualGridList} from '../components/VirtualList';
 import {getSeries, getAmiibos} from '../service';
 
-// import css from './MainPanel.module.less';
+import css from './MainPanel.module.less';
 
 const MainPanelBase = kind({
 	name: 'MainPanel',
@@ -42,16 +42,22 @@ const MainPanelBase = kind({
 		)
 	},
 
+	styles: {
+		css,
+		className: 'panel'
+	},
+
+
 	render: ({active, series, amiibos, renderAmiibos, popup, onClosePopup, ...props}) => {
 		delete props.onOpenAmiibo;
 		return (
 			<Panel {...props}>
-				<Row style={{height:'100%'}}>
+				<Row className={css.fill}>
 					<Cell shrink>
 						<Sidebar active={active} series={series} />
 					</Cell>
 					<Cell>
-						<div style={{height:'100%'}}>
+						<div className={css.fill}>
 							<VirtualGridList
 								dataSize={amiibos.length}
 								itemRenderer={renderAmiibos}
