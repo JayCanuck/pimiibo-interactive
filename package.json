@@ -26,13 +26,14 @@
     "save": "pm2 save",
     "unstartup": "pm2 unstartup",
     "pm2": "pm2",
-    "serve": "enact serve",
+    "serve": "enact serve --port=80",
     "pack": "enact pack",
     "pack-p": "enact pack -p",
     "watch": "enact pack --watch",
     "clean": "enact clean",
     "lint": "enact lint .",
     "license": "enact license",
+    "rebuild": "node-gyp rebuild",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "enact": {
