@@ -22,8 +22,11 @@ const amiiboSort = (a, b) => {
 	}
 };
 
-const updateFormat = res => res.amiibo.map(({head, tail, ...a}) => (
-	Object.assign(a, {keyID: head + tail})
+const updateFormat = res => res.amiibo.map(({head, tail, image, ...a}) => (
+	Object.assign(a, {
+		keyID: head + tail,
+		image: (__DEV__) ? image : 'image?cache=' + encodeURIComponent(image)
+	})
 ));
 
 const storeCache = (fn, res, ...args) => {
