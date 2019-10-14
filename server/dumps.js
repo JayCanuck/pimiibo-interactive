@@ -36,6 +36,8 @@ function lookup(key) {
 	return binFiles.get(key);
 }
 
+scan();
+
 module.exports = {
 	dir,
 	scan,
